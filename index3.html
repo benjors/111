@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Websocket demos</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+
+<body>
+<div id="app">
+    <input type="text" v-model.trim="msg" @keyup.enter="echo">
+    <button @click="echo">发送</button>
+</div>
+
+<script>
+    /* global Vue, WebSocket */
+    var ws = null
+
+    new Vue({
+        el: '#app',
+        data: {
+            msg: ''
+        },
+        methods: {
+            echo: function () {
+                if (!this.msg) return
+                console.log('WebSocket发送消息: ' + this.msg)
+                ws.send(this.msg)
+            },
+            initWebSocket: function (params) {
+                // ws = new WebSocket('wss://echo.websocket.org/')
+                ws = new WebSocket('ws://localhost:9090');
+                // var ws = new WebSocket("ws://localhost:8096/websocket/111405");
+                ws.onopen = function (e) {
+                    console.log('WebSocket已经打开: ')
+                    console.log(e)
+                }
+                ws.onmessage = function (e) {
+                    console.log('WebSocket收到消息: ' + e.data)
+                }
+                ws.onclose = function (e) {
+                    console.log('WebSocket关闭: ')
+                    console.log(e)
+                }
+                ws.onerror = function (e) {
+                    console.log('WebSocket发生错误: ')
+                    console.log(e)
+                }
+            }
+        },
+        created: function () {
+            this.initWebSocket()
+        }
+    })
+</script>
+</body>
+
+</html>
